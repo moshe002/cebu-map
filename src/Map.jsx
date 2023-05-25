@@ -7,8 +7,8 @@ import MAP_LOCATIONS from './map-locations.json';
 
 /* 
   - not responsive
-  - point system must be corrected
-  - better visualization of selected areas
+  - point system must be corrected (points buttons should only be clicked once)
+  - better visualization of selected areas (color coded)
 */
 
 function Map() {
@@ -31,7 +31,6 @@ function Map() {
   const [showProvince, setShowProvince] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [provinceName, setProvinceName] = useState();
-  const [totalPoints, setTotalPoints] = useState(false);
 
   // handles on click
   const handleClick = (area) => {
@@ -63,11 +62,12 @@ function Map() {
     setUserPoints(0)
   }
 
+  // exports html to png (uses html-to-image library)
   const exportImage = () => {
       toPng(elementRef.current, { cacheBust: false })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = "my-image-name.png";
+          link.download = "my-cebu-map.png";
           link.href = dataUrl;
           link.click();
         })
@@ -84,15 +84,20 @@ function Map() {
   const handleOptions = (event) => {
     let btn_id = event.target.id; 
     if(btn_id === '1') {
+      // stayed there
       setUserPoints(prev => prev + 3);
       console.log(`user points: ${userPoints}`)
+      btn_id.disabled;
     } else if(btn_id === '2') {
+      // lived there
       setUserPoints(prev => prev + 5);
       console.log(`user points: ${userPoints}`)
     } else if(btn_id === '3') {
+      // visited there
       setUserPoints(prev => prev + 1);
       console.log(`user points: ${userPoints}`)
     } else if(btn_id === '4') {
+      // 
       setUserPoints(prev => prev + 0);
       console.log(`user points: ${userPoints}`)
     }
@@ -102,13 +107,23 @@ function Map() {
     <div
       ref={elementRef}
       onMouseMove={handleMouseMove}
-      style={{ 
-        position:'relative',
-        alignItems: 'center',
-        border: '1px solid black',
-        width: '100%',
-        height: '100%',
-      }}>
+      className='relative items-center border-2 w-full h-full'>
+        {/* legend */}
+        <div className='flex flex-row items-center p-3 gap-1 absolute top-28 left-12 w-1/4 h-60 rounded-md bg-white z-50 shadow-2xl'>
+          <div className='flex flex-col gap-1 w-1/3'>
+            <div className='p-5 bg-red-300 rounded-md'></div>
+            <div className='p-5 bg-blue-300 rounded-md'></div>
+            <div className='p-5 bg-green-300 rounded-md'></div>
+            <div className='p-5 bg-gray-300 rounded-md'></div>
+          </div>
+          <div className='flex flex-col text-center font-semibold text-xl w-full gap-4'>
+            <h1>Stayed/Slept there</h1>
+            <h1>Lived there</h1>
+            <h1>Visited there</h1>
+            <h1>Haven't visited</h1>
+          </div>
+        </div>
+        {/* end of legend */}
       <ImageMapper 
         onClick={handleClick}
         onImageClick={handleOutsideClick} 
@@ -129,68 +144,51 @@ function Map() {
       {
         showDetails 
         && 
-          <div style={{ 
-            zIndex: 9999,
-            position: 'absolute',
-            top: 100,
-            left: 150,
-            border: '1px solid black',
-            borderRadius: '4px',
-            padding: '20px',
-            backgroundColor: 'white',
-            fontFamily: 'sans-serif',
-          }}>
-            <button onClick={handleOutsideClick} style={{ cursor: 'pointer' }}>&#x2716;</button>
-            <h1>{province}</h1>
-            <br />
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '20px',
-              }}>
-              <button style={{ cursor: 'pointer' }} onClick={handleOptions} title='3 points' id='1'>Stayed there</button>
-              <button style={{ cursor: 'pointer' }} onClick={handleOptions} title='5 points' id='2'>Lived there</button>
-              <button style={{ cursor: 'pointer' }} onClick={handleOptions} title='1 points' id='3'>Passed there</button>
-              <button style={{ cursor: 'pointer' }} onClick={handleOptions} title='0 points' id='4'>Haven't Visited</button>
+          <div
+            className='flex flex-col items-center gap-1 absolute top-96 left-32 p-5 rounded-md bg-white font-sans z-50 shadow-2xl'>
+            <button onClick={handleOutsideClick} className='cursor-pointer'>&#x2716;</button>
+              <br />
+            <h1 className='text-xl font-semibold'>{province}</h1>
+              <br />
+            <div 
+              className='flex flex-col gap-5'>
+              <button className='bg-red-400 p-3 rounded-md cursor-pointer' onClick={handleOptions} title='3 points' id='1'>Stayed/Slept there</button>
+              <button className='bg-blue-300 p-3 rounded-md cursor-pointer' onClick={handleOptions} title='5 points' id='2'>Lived there</button>
+              <button className='bg-green-300 p-3 rounded-md cursor-pointer' onClick={handleOptions} title='1 points' id='3'>Visited there</button>
+              <button className='bg-gray-300 p-3 rounded-md cursor-pointer' onClick={handleOptions} title='0 points' id='4'>Haven't Visited</button>
             </div>
-            <h2>{userPoints}</h2>
+              <br />
+            <h2>Points: {userPoints}</h2>
+              <br />
             <button 
-              style={{ cursor: 'pointer' }}
+              className='bg-black text-white p-3 rounded-md cursor-pointer'
               onClick={clearPoints}>Clear points</button>
           </div>
       }
-      <div
-        id='province_name' 
-        style={{
-          position: 'fixed',
-          top: mousePos.y + 5,
-          left: mousePos.x + 5,
-          zIndex: 9999,
-          fontFamily: 'sans-serif',
-      }}>
-          {
-            showProvince 
-            &&
-            <h1>{provinceName}</h1>
-          }
+      {
+        showProvince 
+        &&
+        <h1 
+          className='fixed text-2xl font-semibold z-50 font-sans'
+          id='province_name' 
+          style={{
+            top: mousePos.y + 15,
+            left: mousePos.x + 15,
+          }}>
+          {provinceName}
+        </h1>
+      }
+      <div className='flex flex-col justify-center gap-5 absolute top-3/4 right-40 z-50'>
+        <h1 className='text-3xl font-bold font-sans'>
+          Total Points: {userPoints}
+        </h1>
+        <button 
+          className='text-black text-lg font-semibold rounded-md bg-white w-auto h-14 cursor-pointer hover:shadow-xl duration-150' 
+          type='button' 
+          onClick={exportImage}>
+            Save Image
+        </button>
       </div>
-      <h1 style={{
-        zIndex: 9999,
-        position: 'absolute',
-        bottom: 100,
-        right: 100,
-        fontSize: '38px',
-        fontFamily: 'sans-serif',
-      }}>Total Points: {userPoints}</h1>
-      <button style={{
-        position: 'absolute',
-        bottom: 50,
-        left: 550,
-        zIndex: 9999,
-        width: '6rem',
-        height: '3.5rem',
-        cursor: 'pointer',
-      }} type='button' onClick={exportImage}>Save Image</button>
     </div>
   )
 };

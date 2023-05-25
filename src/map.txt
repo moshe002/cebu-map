@@ -1,3 +1,5 @@
+wala rani haha, kato ning nag gamit kog image mapper with map element and areas
+
 <map name="image-map">
           u<area onClick={handleClick} target="" alt="Santander" title="Santander" coords="278,1042,291,1042,309,1031,310,1061,301,1067,294,1073,285,1068,281,1064" shape="poly"/>
           u<area target="" alt="Oslob" title="Oslob" coords="331,970,310,1018,311,1059,323,1042,332,1029,339,1024,347,1020,352,1008,361,998,364,988" shape="poly"/>
