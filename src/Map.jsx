@@ -11,7 +11,7 @@ import BottomComponents from './components/bottom-components';
 /* 
   - not responsive
   - point system must be corrected (points buttons should only be clicked once)
-  - better visualization of selected areas (color coded)
+  - better visualization of selected areas (color coded fill color)
 */
 
 function Map() {
@@ -34,8 +34,8 @@ function Map() {
   const [showProvince, setShowProvince] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [provinceName, setProvinceName] = useState(); // gets the area id (province name) on hover
-  //const [strokeColor, setStrokeColor] = useState('black');
   const [isClicked, setIsClicked] = useState(true);
+  //const [fillColor, setFillColor] = useState('transparent');
 
   // handles on click
   const handleClick = (area) => {
@@ -43,6 +43,7 @@ function Map() {
     setShowDetails(true);
     setProvince(area.id);
     setIsClicked(false);
+   // setFillColor(area.fillColor);
   };
 
   const handleMouseMove = (event) => {
@@ -57,10 +58,12 @@ function Map() {
 
   const removeName = () => {
     setShowProvince(false);
-  }
+  };
 
-  const clearPoints = () => {
-    setUserPoints(0)
+  const reset = () => {
+    setUserPoints(0);
+    setShowDetails(false);
+    //window.location.reload();
   }
 
   // exports html to png (uses html-to-image library)
@@ -75,7 +78,7 @@ function Map() {
         .catch((err) => {
           console.log(err);
         });  
-    }
+  }
 
   /* 
     scoring mechanics: 
@@ -87,35 +90,34 @@ function Map() {
     <div
       ref={elementRef}
       onMouseMove={handleMouseMove}
-      className='relative items-center border-2 w-full h-full'>
+      className='relative border-2 w-full h-full overflow-auto'>
       <Legend />
-      <ImageMapper 
-        onClick={handleClick}
-        src={mapURL} 
-        map={CEBU_MAP} 
-        onMouseMove={handleMouseMove}
-        onMouseEnter={displayName}
-        onMouseLeave={removeName}
-        active={true}
-        stayHighlighted={true}
-        stayMultiHighlighted={true}
-        toggleHighlighted={true}
-        responsive={true}
-        parentWidth={window.innerWidth}
-        natural={true}
-        lineWidth={1.5}
-        height={500}
-        width={500}
-        //strokeColor={strokeColor}
-      />      
+        <ImageMapper 
+          onClick={handleClick}
+          src={mapURL} 
+          map={CEBU_MAP} 
+          onMouseMove={handleMouseMove}
+          onMouseEnter={displayName}
+          onMouseLeave={removeName}
+          active={true}
+          stayHighlighted={true}
+          stayMultiHighlighted={true}
+          toggleHighlighted={true}
+          responsive={true}
+          parentWidth={window.innerWidth}
+          natural={true}
+          lineWidth={1.5}
+          height={500}
+          width={500}
+          //fillColor={fillColor}
+        />      
       {
         showDetails 
         && 
           <div className='flex flex-col items-center gap-1 absolute top-1/3 left-28 p-5 rounded-md bg-white font-sans z-50 shadow-2xl'>
             <h1 className='text-xl font-semibold'>{province}</h1>
               <br />
-            <div 
-              className='flex flex-col gap-5'>
+            <div className='flex flex-col gap-5'>
               <button 
                 className='bg-red-400 p-3 rounded-md cursor-pointer' 
                 onClick={() => {
@@ -124,6 +126,7 @@ function Map() {
                   // rgb(252 165 165)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
+                  //setFillColor('rgb(252 165 165)');
                 }} 
                 disabled={isClicked}
                 title='3 points' 
@@ -136,6 +139,7 @@ function Map() {
                   // rgb(147 197 253)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
+                  //setFillColor('rgb(147 197 253)');
                 }} 
                 disabled={isClicked}
                 title='5 points' 
@@ -148,6 +152,7 @@ function Map() {
                   // rgb(134 239 172)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
+                  //setFillColor('rgb(134 239 172)');
                 }} 
                 disabled={isClicked}
                 title='1 points' 
@@ -160,6 +165,7 @@ function Map() {
                   // rgb(209 213 219)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
+                  //setFillColor('rgb(209 213 219)');
                 }} 
                 disabled={isClicked}
                 title='0 points' 
@@ -170,7 +176,7 @@ function Map() {
               <br />
             <button 
               className='bg-black text-white p-3 rounded-md cursor-pointer'
-              onClick={clearPoints}>Clear points</button>
+              onClick={reset}>Reset</button>
           </div>
       }
       {

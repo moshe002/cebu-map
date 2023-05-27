@@ -3,7 +3,7 @@ import React from 'react'
 function Legend() {
   return (
     <>
-        <div className='flex flex-row items-center p-3 gap-1 absolute top-28 left-12 w-1/4 h-80 rounded-md bg-white z-50 shadow-2xl'>
+        <div className='flex flex-row items-center p-3 gap-1 absolute top-20 left-12 w-1/4 h-80 rounded-md bg-white z-50 shadow-2xl'>
             <div className='flex flex-col gap-1 w-1/3'>
                 <div className='flex justify-center text-xs text-center p-5 bg-red-300 rounded-md'>3 points</div>
                 <div className='flex justify-center text-xs text-center p-5 bg-blue-300 rounded-md'>5 points</div>
