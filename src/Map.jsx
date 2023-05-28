@@ -32,10 +32,24 @@ function Map() {
   const [province, setProvince] = useState(); // gets the area id (province name) on click
   const [userPoints, setUserPoints] = useState(0);
   const [showProvince, setShowProvince] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 }); // gets the mouse position inside the mapper
   const [provinceName, setProvinceName] = useState(); // gets the area id (province name) on hover
   const [isClicked, setIsClicked] = useState(true);
-  //const [fillColor, setFillColor] = useState('transparent');
+  const [strokeColor, setStrokeColor] = useState('');
+  const [parentWidth, setParentWidth] = useState(window.innerWidth);
+
+  // updates the window.innerWidth and parent width of the imagemapper
+  useEffect(() => {
+    const handleResize = () => {
+      setParentWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [])
 
   // handles on click
   const handleClick = (area) => {
@@ -43,6 +57,10 @@ function Map() {
     setShowDetails(true);
     setProvince(area.id);
     setIsClicked(false);
+    area['fillColor'] = 'red';
+    console.log(area['fillColor'])
+    // area.strokeColor = strokeColor;
+    // console.log(area.strokeColor)
    // setFillColor(area.fillColor);
   };
 
@@ -60,10 +78,16 @@ function Map() {
     setShowProvince(false);
   };
 
+  const removeDetails = () => {
+    setShowDetails(false);
+    console.clear()
+  }
+
   const reset = () => {
     setUserPoints(0);
     setShowDetails(false);
     //window.location.reload();
+    console.clear()
   }
 
   // exports html to png (uses html-to-image library)
@@ -99,17 +123,19 @@ function Map() {
           onMouseMove={handleMouseMove}
           onMouseEnter={displayName}
           onMouseLeave={removeName}
+          onImageClick={removeDetails}
           active={true}
           stayHighlighted={true}
           stayMultiHighlighted={true}
           toggleHighlighted={true}
           responsive={true}
-          parentWidth={window.innerWidth}
+          parentWidth={parentWidth}
           natural={true}
           lineWidth={1.5}
           height={500}
           width={500}
-          //fillColor={fillColor}
+          strokeColor={strokeColor}
+          //fillColor={fillColor} //this does not work for it changes all of the fillColor for the areas
         />      
       {
         showDetails 
@@ -122,11 +148,10 @@ function Map() {
                 className='bg-red-400 p-3 rounded-md cursor-pointer' 
                 onClick={() => {
                   setUserPoints(prev => prev + 3);
-                  //setStrokeColor('rgb(252 165 165)');
                   // rgb(252 165 165)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
-                  //setFillColor('rgb(252 165 165)');
+                  setStrokeColor('rgb(252 165 165)');
                 }} 
                 disabled={isClicked}
                 title='3 points' 
@@ -135,11 +160,10 @@ function Map() {
                 className='bg-blue-300 p-3 rounded-md cursor-pointer' 
                 onClick={() => {
                   setUserPoints(prev => prev + 5);
-                  //setStrokeColor('rgb(147 197 253)');
                   // rgb(147 197 253)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
-                  //setFillColor('rgb(147 197 253)');
+                  setStrokeColor('rgb(147 197 253)');
                 }} 
                 disabled={isClicked}
                 title='5 points' 
@@ -148,11 +172,10 @@ function Map() {
                 className='bg-green-300 p-3 rounded-md cursor-pointer' 
                 onClick={() => {
                   setUserPoints(prev => prev + 2);
-                  //setStrokeColor('rgb(134 239 172)');
                   // rgb(134 239 172)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
-                  //setFillColor('rgb(134 239 172)');
+                  setStrokeColor('rgb(134 239 172)');
                 }} 
                 disabled={isClicked}
                 title='1 points' 
@@ -161,15 +184,14 @@ function Map() {
                 className='bg-gray-300 p-3 rounded-md cursor-pointer' 
                 onClick={() => {
                   setUserPoints(prev => prev + 0);
-                  //setStrokeColor('rgb(209 213 219)');
                   // rgb(209 213 219)
                   if(!isClicked) setIsClicked(true);
                   setShowDetails(false);
-                  //setFillColor('rgb(209 213 219)');
+                  setStrokeColor('rgb(209 213 219)');
                 }} 
                 disabled={isClicked}
                 title='0 points' 
-                id='4'>Haven't Visited</button>
+                id='4'>Want to visit</button>
             </div>
               <br />
             <h2>Points: {userPoints}</h2>

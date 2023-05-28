@@ -14,7 +14,7 @@ function Legend() {
                 <h1>Stayed/Slept there</h1>
                 <h1>Lived there</h1>
                 <h1>Visited there</h1>
-                <h1>Haven't visited</h1>
+                <h1>Want to visit</h1>
             </div>
         </div>
   </>
